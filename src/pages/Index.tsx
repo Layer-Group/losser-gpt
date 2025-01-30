@@ -262,8 +262,8 @@ export default function Index() {
         showTooltip={showTooltip}
         setShowTooltip={setShowTooltip}
       />
-      <main className="flex-1 flex flex-col">
-        <div className="flex-1 overflow-y-auto">
+      <main className="flex-1 flex flex-col relative">
+        <div className="flex-1 overflow-y-auto pt-16 md:pt-0">
           {showWelcomeScreen ? (
             <WelcomeScreen />
           ) : (

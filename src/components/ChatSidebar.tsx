@@ -16,6 +16,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { PencilSquareIcon, ArchiveBoxIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Menu } from "lucide-react";
 
 interface NavItemProps {
   icon: React.ElementType;
@@ -62,6 +70,8 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat, is
   const [showSettings, setShowSettings] = useState(false);
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState("");
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleLogout = async () => {
     try {
@@ -167,8 +177,8 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat, is
   const activeChats = chats.filter(chat => !chat.archived);
   const archivedChats = chats.filter(chat => chat.archived);
 
-  return (
-    <div className="w-64 h-screen flex flex-col bg-background border-r">
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full bg-background">
       <div className="p-4">
         <div className="flex items-center space-x-2 mb-4">
           <h1 className="text-xl font-semibold">Losser GPT</h1>
@@ -188,7 +198,10 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat, is
           </div>
         </div>
         <button 
-          onClick={onNewChat}
+          onClick={() => {
+            onNewChat();
+            if (isMobile) setIsDrawerOpen(false);
+          }}
           className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
         >
           Nieuwe chat +
@@ -204,77 +217,50 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat, is
             <AccordionContent>
               <div className="space-y-1">
                 {activeChats.map((chat) => (
-                  <div key={chat.id} className="relative">
-                    {editingChatId === chat.id ? (
-                      <div className="flex items-center gap-2 px-3 py-2">
-                        <Input
-                          value={editingTitle}
-                          onChange={(e) => setEditingTitle(e.target.value.slice(0, 10))}
-                          className="h-8 text-sm"
-                          autoFocus
-                        />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleUpdateTitle(chat.id)}
-                          className="h-8 w-8"
-                        >
-                          <Check className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setEditingChatId(null)}
-                          className="h-8 w-8"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <NavItem
-                        icon={MessageSquare}
-                        label={chat.title}
-                        active={chat.id === selectedChatId}
-                        onClick={() => onChatSelect(chat.id)}
-                        actions={
-                          <div className="flex items-center gap-1 bg-background/80 rounded-md px-1">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                startEditingTitle(chat);
-                              }}
-                              className="h-6 w-6"
-                            >
-                              <Edit2 className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleArchiveChat(chat.id, chat.archived);
-                              }}
-                              className="h-6 w-6"
-                            >
-                              <Archive className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteChat(chat.id);
-                              }}
-                              className="h-6 w-6 text-destructive hover:text-destructive"
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        }
-                      />
-                    )}
+                  <div
+                    key={chat.id}
+                    className="group flex items-center justify-between px-3 py-2 hover:bg-secondary rounded-md cursor-pointer"
+                    onClick={() => onChatSelect(chat.id)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <MessageSquare className="w-5 h-5" />
+                      <span className="truncate">{chat.title}</span>
+                    </div>
+                    <div className="flex items-center gap-1 invisible group-hover:visible">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startEditingTitle(chat);
+                        }}
+                        className="h-6 w-6 hover:bg-secondary-foreground/10"
+                      >
+                        <PencilSquareIcon className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleArchiveChat(chat.id, chat.archived);
+                        }}
+                        className="h-6 w-6 hover:bg-secondary-foreground/10"
+                      >
+                        <ArchiveBoxIcon className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteChat(chat.id);
+                        }}
+                        className="h-6 w-6 text-destructive hover:bg-destructive/10"
+                      >
+                        <TrashIcon className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -289,77 +275,50 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat, is
               <AccordionContent>
                 <div className="space-y-1">
                   {archivedChats.map((chat) => (
-                    <div key={chat.id} className="relative">
-                      {editingChatId === chat.id ? (
-                        <div className="flex items-center gap-2 px-3 py-2">
-                          <Input
-                            value={editingTitle}
-                            onChange={(e) => setEditingTitle(e.target.value.slice(0, 10))}
-                            className="h-8 text-sm"
-                            autoFocus
-                          />
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleUpdateTitle(chat.id)}
-                            className="h-8 w-8"
-                          >
-                            <Check className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setEditingChatId(null)}
-                            className="h-8 w-8"
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ) : (
-                        <NavItem
-                          icon={MessageSquare}
-                          label={chat.title}
-                          active={chat.id === selectedChatId}
-                          onClick={() => onChatSelect(chat.id)}
-                          actions={
-                            <div className="flex items-center gap-1 bg-background/80 rounded-md px-1">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  startEditingTitle(chat);
-                                }}
-                                className="h-6 w-6"
-                              >
-                                <Edit2 className="h-3 w-3" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleArchiveChat(chat.id, chat.archived);
-                                }}
-                                className="h-6 w-6"
-                              >
-                                <Archive className="h-3 w-3" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteChat(chat.id);
-                                }}
-                                className="h-6 w-6 text-destructive hover:text-destructive"
-                              >
-                                <Trash2 className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          }
-                        />
-                      )}
+                    <div
+                      key={chat.id}
+                      className="group flex items-center justify-between px-3 py-2 hover:bg-secondary rounded-md cursor-pointer"
+                      onClick={() => onChatSelect(chat.id)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <MessageSquare className="w-5 h-5" />
+                        <span className="truncate">{chat.title}</span>
+                      </div>
+                      <div className="flex items-center gap-1 invisible group-hover:visible">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            startEditingTitle(chat);
+                          }}
+                          className="h-6 w-6 hover:bg-secondary-foreground/10"
+                        >
+                          <PencilSquareIcon className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleArchiveChat(chat.id, chat.archived);
+                          }}
+                          className="h-6 w-6 hover:bg-secondary-foreground/10"
+                        >
+                          <ArchiveBoxIcon className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteChat(chat.id);
+                          }}
+                          className="h-6 w-6 text-destructive hover:bg-destructive/10"
+                        >
+                          <TrashIcon className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -373,12 +332,18 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat, is
         <NavItem 
           icon={Settings} 
           label="Instellingen" 
-          onClick={() => setShowSettings(true)}
+          onClick={() => {
+            setShowSettings(true);
+            if (isMobile) setIsDrawerOpen(false);
+          }}
         />
         <NavItem 
           icon={HelpCircle} 
           label="Help" 
-          onClick={() => navigate("/help")}
+          onClick={() => {
+            navigate("/help");
+            if (isMobile) setIsDrawerOpen(false);
+          }}
         />
         <NavItem 
           icon={LogOut} 
@@ -386,7 +351,37 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat, is
           onClick={handleLogout}
         />
       </div>
+    </div>
+  );
 
+  if (isMobile) {
+    return (
+      <>
+        <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+          <DrawerTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="fixed top-4 left-4 z-50"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent className="h-[85vh]">
+            <SidebarContent />
+          </DrawerContent>
+        </Drawer>
+        <SettingsDialog
+          open={showSettings}
+          onOpenChange={setShowSettings}
+        />
+      </>
+    );
+  }
+
+  return (
+    <div className="w-64 h-screen flex flex-col bg-background border-r">
+      <SidebarContent />
       <SettingsDialog
         open={showSettings}
         onOpenChange={setShowSettings}

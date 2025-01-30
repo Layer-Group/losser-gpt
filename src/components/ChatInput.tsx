@@ -49,7 +49,7 @@ export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
   return (
     <>
       <form onSubmit={handleSubmit} className="p-4 border-t bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex gap-2 max-w-4xl mx-auto">
+        <div className="flex gap-2 max-w-4xl mx-auto px-2">
           <input
             type="text"
             value={message}

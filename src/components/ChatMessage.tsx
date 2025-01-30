@@ -18,7 +18,7 @@ export const ChatMessage = ({ content, isUser, isLoading }: ChatMessageProps) =>
     >
       <div
         className={cn(
-          "rounded-lg px-4 py-2 max-w-[80%]",
+          "rounded-lg px-4 py-2 max-w-[85%] md:max-w-[80%]",
           isUser 
             ? "bg-primary text-primary-foreground dark:glass-morphism" 
             : "bg-secondary text-secondary-foreground dark:bg-secondary/10"
@@ -30,7 +30,7 @@ export const ChatMessage = ({ content, isUser, isLoading }: ChatMessageProps) =>
             <span>Antwoord genereren...</span>
           </div>
         ) : (
-          content
+          <div className="break-words whitespace-pre-wrap">{content}</div>
         )}
       </div>
     </div>
