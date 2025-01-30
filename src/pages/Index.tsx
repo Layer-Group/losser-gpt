@@ -9,6 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Chat, Message } from "@/types/chat";
+import { ShieldCheckIcon } from '@heroicons/react/24/solid'
 
 export default function Index() {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
@@ -16,6 +17,9 @@ export default function Index() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isProtected, setIsProtected] = useState(false)
+  const [showTooltip, setShowTooltip] = useState(false)
+  const [user, setUser] = useState(null);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -218,6 +222,35 @@ export default function Index() {
 
   const showWelcomeScreen = !selectedChatId || (localMessages.length === 0 && !messages?.length);
 
+  // Voeg deze useEffect toe om de user op te halen
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    
+    getUser();
+
+    // Subscribe to auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Effect voor de gegevensbescherming status
+  useEffect(() => {
+    if (user) {
+      const timer = setTimeout(() => {
+        setIsProtected(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    } else {
+      setIsProtected(false);
+    }
+  }, [user]);
+
   return (
     <div className="flex h-screen overflow-hidden">
       <ChatSidebar
@@ -225,6 +258,9 @@ export default function Index() {
         selectedChatId={selectedChatId}
         onChatSelect={handleChatSelect}
         onNewChat={handleNewChat}
+        isProtected={isProtected}
+        showTooltip={showTooltip}
+        setShowTooltip={setShowTooltip}
       />
       <main className="flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto">

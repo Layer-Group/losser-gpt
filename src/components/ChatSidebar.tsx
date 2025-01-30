@@ -9,6 +9,7 @@ import { useState } from "react";
 import { SettingsDialog } from "./SettingsDialog";
 import { Chat } from "@/types/chat";
 import { Input } from "./ui/input";
+import { ShieldCheckIcon } from '@heroicons/react/24/solid'
 
 interface NavItemProps {
   icon: React.ElementType;
@@ -23,6 +24,9 @@ interface ChatSidebarProps {
   selectedChatId: string | null;
   onChatSelect: (chatId: string) => void;
   onNewChat: () => void;
+  isProtected: boolean;
+  showTooltip: boolean;
+  setShowTooltip: (show: boolean) => void;
 }
 
 const NavItem = ({ icon: Icon, label, active, onClick, actions }: NavItemProps) => (
@@ -45,7 +49,7 @@ const NavItem = ({ icon: Icon, label, active, onClick, actions }: NavItemProps) 
   </div>
 );
 
-export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: ChatSidebarProps) => {
+export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat, isProtected, showTooltip, setShowTooltip }: ChatSidebarProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -160,7 +164,23 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
   return (
     <div className="w-64 h-screen flex flex-col bg-background border-r">
       <div className="p-4">
-        <h1 className="text-xl font-semibold mb-4">Losser GPT</h1>
+        <div className="flex items-center space-x-2 mb-4">
+          <h1 className="text-xl font-semibold">Losser GPT</h1>
+          <div 
+            className="relative"
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+          >
+            <ShieldCheckIcon 
+              className={`w-5 h-5 ${isProtected ? 'text-green-500' : 'text-gray-400'}`}
+            />
+            {showTooltip && (
+              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 px-3 py-1 text-sm text-white bg-gray-800 rounded-md whitespace-nowrap z-50">
+                {isProtected ? 'Gegevensbescherming ingeschakeld' : 'Gegevensbescherming uitgeschakeld'}
+              </div>
+            )}
+          </div>
+        </div>
         <button 
           onClick={onNewChat}
           className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
