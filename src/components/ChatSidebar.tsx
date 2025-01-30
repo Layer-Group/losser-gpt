@@ -175,7 +175,7 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat, is
               className={`w-5 h-5 ${isProtected ? 'text-green-500' : 'text-gray-400'}`}
             />
             {showTooltip && (
-              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 px-3 py-1 text-sm text-white bg-gray-800 rounded-md whitespace-nowrap z-50">
+              <div className="absolute left-0 top-full mt-2 px-3 py-1 text-sm text-white bg-gray-800 rounded-md whitespace-nowrap z-50">
                 {isProtected ? 'Gegevensbescherming ingeschakeld' : 'Gegevensbescherming uitgeschakeld'}
               </div>
             )}
