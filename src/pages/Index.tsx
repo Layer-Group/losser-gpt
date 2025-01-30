@@ -7,17 +7,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { Chat } from "@/types/chat";
 
 interface Message {
   id: string;
   content: string;
   is_user: boolean;
-  created_at: string;
-}
-
-interface Chat {
-  id: string;
-  title: string;
   created_at: string;
 }
 
@@ -91,7 +86,10 @@ const Index = () => {
 
       const { data, error } = await supabase
         .from("chats")
-        .insert([{ user_id: user.id }])
+        .insert([{ 
+          user_id: user.id,
+          archived: false 
+        }])
         .select()
         .single();
       
