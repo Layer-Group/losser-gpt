@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App.tsx';
 import Auth from './pages/Auth.tsx';
@@ -15,6 +15,10 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
+        element: <Navigate to="/index" replace />,
+      },
+      {
+        path: "index",
         element: <Index />,
       },
       {
