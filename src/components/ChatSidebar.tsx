@@ -1,11 +1,25 @@
 import { MessageSquare, Settings, HelpCircle, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
+
+interface Chat {
+  id: string;
+  title: string;
+  created_at: string;
+}
 
 interface NavItemProps {
   icon: React.ElementType;
   label: string;
   active?: boolean;
   onClick?: () => void;
+}
+
+interface ChatSidebarProps {
+  chats: Chat[];
+  selectedChatId: string | null;
+  onChatSelect: (chatId: string) => void;
+  onNewChat: () => void;
 }
 
 const NavItem = ({ icon: Icon, label, active, onClick }: NavItemProps) => (
@@ -21,23 +35,40 @@ const NavItem = ({ icon: Icon, label, active, onClick }: NavItemProps) => (
   </button>
 );
 
-export const ChatSidebar = () => {
+export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: ChatSidebarProps) => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-64 h-screen flex flex-col bg-background border-r">
       <div className="p-4">
         <h1 className="text-xl font-semibold mb-4">Custom GPT</h1>
-        <button className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors">
+        <button 
+          onClick={onNewChat}
+          className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+        >
           New chat +
         </button>
       </div>
 
-      <nav className="flex-1 p-2 space-y-1">
-        <NavItem icon={MessageSquare} label="Chats" active />
+      <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
+        {chats.map((chat) => (
+          <NavItem
+            key={chat.id}
+            icon={MessageSquare}
+            label={chat.title}
+            active={chat.id === selectedChatId}
+            onClick={() => onChatSelect(chat.id)}
+          />
+        ))}
       </nav>
 
       <div className="p-2 border-t">
         <NavItem icon={Settings} label="Settings" />
-        <NavItem icon={HelpCircle} label="Help" />
+        <NavItem 
+          icon={HelpCircle} 
+          label="Help" 
+          onClick={() => navigate("/help")}
+        />
         <NavItem icon={LogOut} label="Log Out" />
       </div>
     </div>
