@@ -206,7 +206,7 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
                   active={chat.id === selectedChatId}
                   onClick={() => onChatSelect(chat.id)}
                   actions={
-                    <>
+                    <div className="flex items-center gap-1 bg-background/80 rounded-md px-1">
                       <Button
                         variant="ghost"
                         size="icon"
@@ -214,9 +214,9 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
                           e.stopPropagation();
                           startEditingTitle(chat);
                         }}
-                        className="h-8 w-8"
+                        className="h-6 w-6"
                       >
-                        <Edit2 className="h-4 w-4" />
+                        <Edit2 className="h-3 w-3" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -225,9 +225,9 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
                           e.stopPropagation();
                           handleArchiveChat(chat.id, chat.archived);
                         }}
-                        className="h-8 w-8"
+                        className="h-6 w-6"
                       >
-                        <Archive className="h-4 w-4" />
+                        <Archive className="h-3 w-3" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -236,11 +236,11 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
                           e.stopPropagation();
                           handleDeleteChat(chat.id);
                         }}
-                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        className="h-6 w-6 text-destructive hover:text-destructive"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-3 w-3" />
                       </Button>
-                    </>
+                    </div>
                   }
                 />
               )}
@@ -259,7 +259,7 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
                 active={chat.id === selectedChatId}
                 onClick={() => onChatSelect(chat.id)}
                 actions={
-                  <>
+                  <div className="flex items-center gap-1 bg-background/80 rounded-md px-1">
                     <Button
                       variant="ghost"
                       size="icon"
@@ -267,9 +267,9 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
                         e.stopPropagation();
                         handleArchiveChat(chat.id, chat.archived);
                       }}
-                      className="h-8 w-8"
+                      className="h-6 w-6"
                     >
-                      <Archive className="h-4 w-4" />
+                      <Archive className="h-3 w-3" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -278,11 +278,11 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
                         e.stopPropagation();
                         handleDeleteChat(chat.id);
                       }}
-                      className="h-8 w-8 text-destructive hover:text-destructive"
+                      className="h-6 w-6 text-destructive hover:text-destructive"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3 w-3" />
                     </Button>
-                  </>
+                  </div>
                 }
               />
             ))}
