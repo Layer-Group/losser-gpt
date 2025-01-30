@@ -105,10 +105,29 @@ export default function Index() {
   });
 
   const [pendingMessage, setPendingMessage] = useState<Message | null>(null);
+  const [localMessages, setLocalMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    if (messages) {
+      setLocalMessages(messages);
+    }
+  }, [messages]);
 
   const sendMessage = useMutation({
     mutationFn: async (content: string) => {
       if (!selectedChatId) throw new Error("No chat selected");
+
+      // Create a temporary message to show immediately
+      const tempUserMessage: Message = {
+        id: 'temp-' + Date.now(),
+        chat_id: selectedChatId,
+        content,
+        is_user: true,
+        created_at: new Date().toISOString(),
+      };
+
+      // Add the user message to local state immediately
+      setLocalMessages(prev => [...prev, tempUserMessage]);
 
       // First, save the user's message
       const { error: messageError } = await supabase
@@ -169,11 +188,12 @@ export default function Index() {
 
   const handleChatSelect = (chatId: string) => {
     setSelectedChatId(chatId);
+    setLocalMessages([]); // Clear local messages when switching chats
   };
 
   const isLoading = sendMessage.isPending;
 
-  const showWelcomeScreen = !selectedChatId || (messages && messages.length === 0);
+  const showWelcomeScreen = !selectedChatId || (localMessages.length === 0 && !messages?.length);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -189,7 +209,7 @@ export default function Index() {
             <WelcomeScreen />
           ) : (
             <>
-              {messages?.map((message: Message) => (
+              {localMessages.map((message: Message) => (
                 <ChatMessage
                   key={message.id}
                   content={message.content}
