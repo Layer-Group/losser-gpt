@@ -169,14 +169,20 @@ export function ChatSidebar({
 
   return (
     <div className="w-64 h-screen p-4 border-r bg-background">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Chats</h2>
-        <div className="flex items-center space-x-2">
+      <div className="flex flex-col space-y-4 mb-4">
+        <div className="flex items-center">
+          <h2 className="text-lg font-semibold">Losser GPT</h2>
+        </div>
+        <div className="flex flex-col space-y-2">
+          <Button onClick={onNewChat} size="sm" className="w-full">
+            <PlusIcon className="h-4 w-4 mr-2" />
+            Nieuwe Chat
+          </Button>
           {isProtected && (
             <TooltipProvider>
               <Tooltip open={showTooltip} onOpenChange={setShowTooltip}>
                 <TooltipTrigger asChild>
-                  <div>
+                  <div className="flex justify-center">
                     <ShieldCheckIcon className="h-5 w-5 text-green-500" />
                   </div>
                 </TooltipTrigger>
@@ -186,10 +192,6 @@ export function ChatSidebar({
               </Tooltip>
             </TooltipProvider>
           )}
-          <Button onClick={onNewChat} size="sm" className="w-full">
-            <PlusIcon className="h-4 w-4 mr-2" />
-            Nieuwe Chat
-          </Button>
         </div>
       </div>
 
