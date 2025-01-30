@@ -1,4 +1,4 @@
-import { MessageSquare, Settings, HelpCircle, LogOut, Trash2, Archive } from "lucide-react";
+import { MessageSquare, Settings, HelpCircle, LogOut, Trash2, Archive, Edit2, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { SettingsDialog } from "./SettingsDialog";
 import { Chat } from "@/types/chat";
+import { Input } from "./ui/input";
 
 interface NavItemProps {
   icon: React.ElementType;
@@ -49,6 +50,8 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showSettings, setShowSettings] = useState(false);
+  const [editingChatId, setEditingChatId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState("");
 
   const handleLogout = async () => {
     try {
@@ -119,6 +122,38 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
     }
   };
 
+  const startEditingTitle = (chat: Chat) => {
+    setEditingChatId(chat.id);
+    setEditingTitle(chat.title);
+  };
+
+  const handleUpdateTitle = async (chatId: string) => {
+    if (!editingTitle.trim()) return;
+    
+    try {
+      const { error } = await supabase
+        .from('chats')
+        .update({ title: editingTitle.slice(0, 10) })
+        .eq('id', chatId);
+
+      if (error) throw error;
+
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+      setEditingChatId(null);
+      
+      toast({
+        title: "Titel bijgewerkt",
+        description: "De chat titel is succesvol bijgewerkt.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Fout bij bijwerken",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   const activeChats = chats.filter(chat => !chat.archived);
   const archivedChats = chats.filter(chat => chat.archived);
 
@@ -138,39 +173,78 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
         <div className="mb-4">
           <h2 className="px-3 text-sm font-medium text-muted-foreground mb-2">Actieve Chats</h2>
           {activeChats.map((chat) => (
-            <NavItem
-              key={chat.id}
-              icon={MessageSquare}
-              label={chat.title}
-              active={chat.id === selectedChatId}
-              onClick={() => onChatSelect(chat.id)}
-              actions={
-                <>
+            <div key={chat.id} className="relative">
+              {editingChatId === chat.id ? (
+                <div className="flex items-center gap-2 px-3 py-2">
+                  <Input
+                    value={editingTitle}
+                    onChange={(e) => setEditingTitle(e.target.value.slice(0, 10))}
+                    className="h-8 text-sm"
+                    autoFocus
+                  />
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleArchiveChat(chat.id, chat.archived);
-                    }}
+                    onClick={() => handleUpdateTitle(chat.id)}
                     className="h-8 w-8"
                   >
-                    <Archive className="h-4 w-4" />
+                    <Check className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteChat(chat.id);
-                    }}
-                    className="h-8 w-8 text-destructive hover:text-destructive"
+                    onClick={() => setEditingChatId(null)}
+                    className="h-8 w-8"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <X className="h-4 w-4" />
                   </Button>
-                </>
-              }
-            />
+                </div>
+              ) : (
+                <NavItem
+                  icon={MessageSquare}
+                  label={chat.title}
+                  active={chat.id === selectedChatId}
+                  onClick={() => onChatSelect(chat.id)}
+                  actions={
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startEditingTitle(chat);
+                        }}
+                        className="h-8 w-8"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleArchiveChat(chat.id, chat.archived);
+                        }}
+                        className="h-8 w-8"
+                      >
+                        <Archive className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteChat(chat.id);
+                        }}
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </>
+                  }
+                />
+              )}
+            </div>
           ))}
         </div>
 
