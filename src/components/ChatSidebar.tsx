@@ -104,11 +104,11 @@ export function ChatSidebar({
   };
 
   const handleTitleSubmit = (chatId: string) => {
-    if (newTitle.length > 10) {
+    if (newTitle.length > 12) { // Updated from 10 to 12
       toast({
         variant: "destructive",
         title: "Fout",
-        description: "De titel mag maximaal 10 karakters bevatten.",
+        description: "De titel mag maximaal 12 karakters bevatten.", // Updated error message
       });
       return;
     }
@@ -136,7 +136,7 @@ export function ChatSidebar({
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
               className="h-8"
-              maxLength={10}
+              maxLength={12} // Updated from 10 to 12
               onClick={(e) => e.stopPropagation()}
             />
           </form>
