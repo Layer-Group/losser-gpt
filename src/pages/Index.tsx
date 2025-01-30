@@ -108,6 +108,7 @@ export default function Index() {
     mutationFn: async (content: string) => {
       if (!selectedChatId) throw new Error("No chat selected");
 
+      // First, save the user's message
       const { error: messageError } = await supabase
         .from("messages")
         .insert([
@@ -120,22 +121,16 @@ export default function Index() {
 
       if (messageError) throw messageError;
 
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      // Then call the Edge Function
+      const { data, error } = await supabase.functions.invoke('chat', {
+        body: {
           message: content,
           chatId: selectedChatId,
-        }),
+        },
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to send message");
-      }
-
-      return response.json();
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["messages", selectedChatId] });
