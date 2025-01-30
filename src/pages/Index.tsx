@@ -40,9 +40,13 @@ export default function Index() {
   const { data: chats, isLoading: isLoadingChats } = useQuery({
     queryKey: ["chats"],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
       const { data: chats, error } = await supabase
         .from("chats")
         .select("*")
+        .eq('user_id', user.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -54,6 +58,10 @@ export default function Index() {
     queryKey: ["messages", selectedChatId],
     queryFn: async () => {
       if (!selectedChatId) return [];
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
       const { data: messages, error } = await supabase
         .from("messages")
         .select("*")
@@ -68,14 +76,14 @@ export default function Index() {
 
   const createChat = useMutation({
     mutationFn: async () => {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) throw new Error("No user found");
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
 
       const { data: chat, error } = await supabase
         .from("chats")
         .insert([{ 
           title: "Nieuwe Chat",
-          user_id: user.user.id 
+          user_id: user.id 
         }])
         .select()
         .single();
