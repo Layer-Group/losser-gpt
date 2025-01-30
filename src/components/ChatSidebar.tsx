@@ -1,4 +1,4 @@
-import { MessageSquare, PenLine, Code, Settings, HelpCircle, LogOut } from "lucide-react";
+import { MessageSquare, Settings, HelpCircle, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavItemProps {
@@ -33,8 +33,6 @@ export const ChatSidebar = () => {
 
       <nav className="flex-1 p-2 space-y-1">
         <NavItem icon={MessageSquare} label="Chats" active />
-        <NavItem icon={PenLine} label="Writing" />
-        <NavItem icon={Code} label="Coding" />
       </nav>
 
       <div className="p-2 border-t">
