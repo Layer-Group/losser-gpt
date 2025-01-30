@@ -11,6 +11,7 @@ export type Database = {
     Tables: {
       chats: {
         Row: {
+          archived: boolean | null
           created_at: string
           id: string
           title: string
@@ -18,6 +19,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          archived?: boolean | null
           created_at?: string
           id?: string
           title?: string
@@ -25,6 +27,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          archived?: boolean | null
           created_at?: string
           id?: string
           title?: string
