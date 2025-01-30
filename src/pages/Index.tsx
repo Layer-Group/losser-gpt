@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChatSidebar } from "@/components/ChatSidebar";
@@ -15,6 +15,11 @@ export default function Index() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   // Add authentication check
   useEffect(() => {
@@ -112,6 +117,11 @@ export default function Index() {
       setLocalMessages(messages);
     }
   }, [messages]);
+
+  // Add auto-scroll effect
+  useEffect(() => {
+    scrollToBottom();
+  }, [localMessages, pendingMessage]);
 
   const sendMessage = useMutation({
     mutationFn: async (content: string) => {
@@ -224,6 +234,7 @@ export default function Index() {
                   isLoading={true}
                 />
               )}
+              <div ref={messagesEndRef} />
             </>
           )}
         </div>
