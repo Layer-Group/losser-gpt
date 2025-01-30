@@ -7,13 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { SettingsDialog } from "./SettingsDialog";
-
-interface Chat {
-  id: string;
-  title: string;
-  created_at: string;
-  archived: boolean;
-}
+import { Chat } from "@/types/chat";
 
 interface NavItemProps {
   icon: React.ElementType;
@@ -80,7 +74,6 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
 
       if (error) throw error;
 
-      // Invalidate the chats query to refresh the list
       queryClient.invalidateQueries({ queryKey: ["chats"] });
 
       toast({
@@ -109,7 +102,6 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
 
       if (error) throw error;
 
-      // Invalidate the chats query to refresh the list
       queryClient.invalidateQueries({ queryKey: ["chats"] });
 
       toast({
@@ -133,7 +125,7 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
   return (
     <div className="w-64 h-screen flex flex-col bg-background border-r">
       <div className="p-4">
-        <h1 className="text-xl font-semibold mb-4">Custom GPT</h1>
+        <h1 className="text-xl font-semibold mb-4">Losser GPT</h1>
         <button 
           onClick={onNewChat}
           className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"

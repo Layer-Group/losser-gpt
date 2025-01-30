@@ -8,7 +8,7 @@ import { WelcomeScreen } from "@/components/WelcomeScreen";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Message } from "@/types/chat";
+import { Chat, Message } from "@/types/chat";
 
 export default function Index() {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
@@ -47,9 +47,15 @@ export default function Index() {
 
   const createChat = useMutation({
     mutationFn: async () => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error("No user found");
+
       const { data: chat, error } = await supabase
         .from("chats")
-        .insert([{ title: "Nieuwe Chat - Losser GPT" }])
+        .insert([{ 
+          title: "Nieuwe Chat",
+          user_id: user.user.id 
+        }])
         .select()
         .single();
 
@@ -119,7 +125,7 @@ export default function Index() {
     sendMessage.mutate(content);
   };
 
-  const handleCreateChat = () => {
+  const handleNewChat = () => {
     createChat.mutate();
   };
 
@@ -135,8 +141,7 @@ export default function Index() {
         chats={chats || []}
         selectedChatId={selectedChatId}
         onChatSelect={handleChatSelect}
-        onCreateChat={handleCreateChat}
-        isLoading={isLoadingChats}
+        onNewChat={handleNewChat}
       />
       <main className="flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto">

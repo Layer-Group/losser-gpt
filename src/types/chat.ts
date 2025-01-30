@@ -6,3 +6,11 @@ export interface Chat {
   archived: boolean;
   updated_at: string;
 }
+
+export interface Message {
+  id: string;
+  chat_id: string;
+  content: string;
+  is_user: boolean;
+  created_at: string;
+}
