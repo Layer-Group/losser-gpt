@@ -14,6 +14,8 @@ const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const isFormValid = email.trim() !== "" && password.trim() !== "";
+
   const handleAuth = async (type: "login" | "signup") => {
     try {
       setLoading(true);
@@ -65,7 +67,7 @@ const Auth = () => {
                 <Button
                   className="w-full"
                   onClick={() => handleAuth("login")}
-                  disabled={loading}
+                  disabled={loading || !isFormValid}
                 >
                   {loading ? "Laden..." : "Inloggen"}
                 </Button>
@@ -88,7 +90,7 @@ const Auth = () => {
                 <Button
                   className="w-full"
                   onClick={() => handleAuth("signup")}
-                  disabled={loading}
+                  disabled={loading || !isFormValid}
                 >
                   {loading ? "Laden..." : "Registreren"}
                 </Button>
