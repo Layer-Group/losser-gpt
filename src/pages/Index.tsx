@@ -18,7 +18,16 @@ export default function Index() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          messagesEndRef.current?.scrollIntoView({ 
+            behavior: "smooth",
+            block: "end"
+          });
+        }, 100);
+      });
+    }
   };
 
   // Add authentication check
@@ -118,9 +127,13 @@ export default function Index() {
     }
   }, [messages]);
 
-  // Add auto-scroll effect
+  // Add auto-scroll effect with debounce
   useEffect(() => {
-    scrollToBottom();
+    const timeoutId = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
   }, [localMessages, pendingMessage]);
 
   const sendMessage = useMutation({
@@ -234,7 +247,7 @@ export default function Index() {
                   isLoading={true}
                 />
               )}
-              <div ref={messagesEndRef} />
+              <div ref={messagesEndRef} className="h-px" />
             </>
           )}
         </div>
