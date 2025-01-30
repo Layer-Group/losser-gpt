@@ -104,6 +104,8 @@ export default function Index() {
     },
   });
 
+  const [pendingMessage, setPendingMessage] = useState<Message | null>(null);
+
   const sendMessage = useMutation({
     mutationFn: async (content: string) => {
       if (!selectedChatId) throw new Error("No chat selected");
@@ -121,6 +123,15 @@ export default function Index() {
 
       if (messageError) throw messageError;
 
+      // Set pending message for immediate display
+      setPendingMessage({
+        id: 'pending',
+        chat_id: selectedChatId,
+        content: '',
+        is_user: false,
+        created_at: new Date().toISOString(),
+      });
+
       // Then call the Edge Function
       const { data, error } = await supabase.functions.invoke('chat', {
         body: {
@@ -129,6 +140,8 @@ export default function Index() {
         },
       });
 
+      setPendingMessage(null);
+
       if (error) throw error;
       return data;
     },
@@ -136,6 +149,7 @@ export default function Index() {
       queryClient.invalidateQueries({ queryKey: ["messages", selectedChatId] });
     },
     onError: () => {
+      setPendingMessage(null);
       toast({
         variant: "destructive",
         title: "Fout",
@@ -174,13 +188,23 @@ export default function Index() {
           {showWelcomeScreen ? (
             <WelcomeScreen />
           ) : (
-            messages?.map((message: Message) => (
-              <ChatMessage
-                key={message.id}
-                content={message.content}
-                isUser={message.is_user}
-              />
-            ))
+            <>
+              {messages?.map((message: Message) => (
+                <ChatMessage
+                  key={message.id}
+                  content={message.content}
+                  isUser={message.is_user}
+                />
+              ))}
+              {pendingMessage && (
+                <ChatMessage
+                  key="pending"
+                  content=""
+                  isUser={false}
+                  isLoading={true}
+                />
+              )}
+            </>
           )}
         </div>
         <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
