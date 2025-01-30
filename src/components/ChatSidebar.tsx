@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Chat {
   id: string;
@@ -50,6 +51,7 @@ const NavItem = ({ icon: Icon, label, active, onClick, actions }: NavItemProps) 
 export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: ChatSidebarProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const handleLogout = async () => {
     try {
@@ -74,6 +76,9 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
         .eq('id', chatId);
 
       if (error) throw error;
+
+      // Invalidate the chats query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
 
       toast({
         title: "Chat deleted",
@@ -100,6 +105,9 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
         .eq('id', chatId);
 
       if (error) throw error;
+
+      // Invalidate the chats query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
 
       toast({
         title: isArchived ? "Chat unarchived" : "Chat archived",
