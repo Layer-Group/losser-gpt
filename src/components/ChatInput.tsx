@@ -27,7 +27,7 @@ export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Typ een bericht..."
           disabled={isLoading}
-          className="flex-1 px-4 py-2 rounded-md border bg-background focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+          className="flex-1 px-4 py-2 rounded-md border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
         />
         <button
           type="submit"

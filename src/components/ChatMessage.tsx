@@ -18,7 +18,7 @@ export const ChatMessage = ({ content, isUser }: ChatMessageProps) => {
           "rounded-lg px-4 py-2 max-w-[80%]",
           isUser 
             ? "bg-primary text-primary-foreground dark:glass-morphism" 
-            : "bg-secondary dark:bg-secondary/10"
+            : "bg-secondary text-secondary-foreground dark:bg-secondary/10"
         )}
       >
         {content}
