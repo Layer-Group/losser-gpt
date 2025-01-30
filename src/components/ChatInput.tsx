@@ -25,7 +25,7 @@ export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type a message..."
+          placeholder="Typ een bericht..."
           disabled={isLoading}
           className="flex-1 px-4 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
         />

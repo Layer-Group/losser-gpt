@@ -61,7 +61,7 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
       navigate("/auth");
     } catch (error: any) {
       toast({
-        title: "Error logging out",
+        title: "Fout bij uitloggen",
         description: error.message,
         variant: "destructive",
       });
@@ -81,8 +81,8 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
       queryClient.invalidateQueries({ queryKey: ["chats"] });
 
       toast({
-        title: "Chat deleted",
-        description: "The chat has been permanently deleted.",
+        title: "Chat verwijderd",
+        description: "De chat is permanent verwijderd.",
       });
 
       if (selectedChatId === chatId) {
@@ -90,7 +90,7 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
       }
     } catch (error: any) {
       toast({
-        title: "Error deleting chat",
+        title: "Fout bij verwijderen",
         description: error.message,
         variant: "destructive",
       });
@@ -110,14 +110,14 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
       queryClient.invalidateQueries({ queryKey: ["chats"] });
 
       toast({
-        title: isArchived ? "Chat unarchived" : "Chat archived",
+        title: isArchived ? "Chat uit archief gehaald" : "Chat gearchiveerd",
         description: isArchived 
-          ? "The chat has been moved back to active chats."
-          : "The chat has been moved to archives.",
+          ? "De chat is terug verplaatst naar actieve chats."
+          : "De chat is verplaatst naar het archief.",
       });
     } catch (error: any) {
       toast({
-        title: "Error updating chat",
+        title: "Fout bij bijwerken",
         description: error.message,
         variant: "destructive",
       });
@@ -135,13 +135,13 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
           onClick={onNewChat}
           className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
         >
-          New chat +
+          Nieuwe chat +
         </button>
       </div>
 
       <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
         <div className="mb-4">
-          <h2 className="px-3 text-sm font-medium text-muted-foreground mb-2">Active Chats</h2>
+          <h2 className="px-3 text-sm font-medium text-muted-foreground mb-2">Actieve Chats</h2>
           {activeChats.map((chat) => (
             <NavItem
               key={chat.id}
@@ -181,7 +181,7 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
 
         {archivedChats.length > 0 && (
           <div className="mb-4">
-            <h2 className="px-3 text-sm font-medium text-muted-foreground mb-2">Archived Chats</h2>
+            <h2 className="px-3 text-sm font-medium text-muted-foreground mb-2">Gearchiveerde Chats</h2>
             {archivedChats.map((chat) => (
               <NavItem
                 key={chat.id}
@@ -222,7 +222,7 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
       </nav>
 
       <div className="p-2 border-t">
-        <NavItem icon={Settings} label="Settings" />
+        <NavItem icon={Settings} label="Instellingen" />
         <NavItem 
           icon={HelpCircle} 
           label="Help" 
@@ -230,7 +230,7 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
         />
         <NavItem 
           icon={LogOut} 
-          label="Log Out" 
+          label="Uitloggen" 
           onClick={handleLogout}
         />
       </div>

@@ -6,24 +6,24 @@ const Help = () => {
 
   const faqs = [
     {
-      question: "What is Custom GPT?",
-      answer: "Custom GPT is an AI-powered chat interface that allows you to have conversations with an advanced language model. It's designed to help answer your questions and assist with various tasks."
+      question: "Wat is Custom GPT?",
+      answer: "Custom GPT is een AI-aangedreven chatinterface waarmee je gesprekken kunt voeren met een geavanceerd taalmodel. Het is ontworpen om je vragen te beantwoorden en te helpen bij verschillende taken."
     },
     {
-      question: "How do I start a new chat?",
-      answer: "Click the 'New chat +' button in the sidebar to start a fresh conversation. You can have multiple chats running simultaneously and switch between them using the sidebar."
+      question: "Hoe start ik een nieuwe chat?",
+      answer: "Klik op de 'Nieuwe chat +' knop in de zijbalk om een nieuw gesprek te starten. Je kunt meerdere chats tegelijk hebben en tussen ze wisselen via de zijbalk."
     },
     {
-      question: "Is my conversation history saved?",
-      answer: "Yes, all your chat conversations are saved and can be accessed from the sidebar. You can return to previous conversations at any time."
+      question: "Wordt mijn gespreksgeschiedenis opgeslagen?",
+      answer: "Ja, al je chatgesprekken worden opgeslagen en zijn toegankelijk via de zijbalk. Je kunt op elk moment terugkeren naar eerdere gesprekken."
     },
     {
-      question: "What can I ask Custom GPT?",
-      answer: "You can ask questions about a wide range of topics, request explanations, seek advice, or engage in general conversation. The AI is designed to be helpful while maintaining appropriate boundaries."
+      question: "Wat kan ik aan Custom GPT vragen?",
+      answer: "Je kunt vragen stellen over een breed scala aan onderwerpen, om uitleg vragen, advies inwinnen of een algemeen gesprek voeren. De AI is ontworpen om behulpzaam te zijn binnen passende grenzen."
     },
     {
-      question: "How accurate are the responses?",
-      answer: "While the AI strives to provide accurate and helpful information, it's important to verify critical information from authoritative sources. The AI is a tool to assist, not a replacement for professional advice."
+      question: "Hoe nauwkeurig zijn de antwoorden?",
+      answer: "Hoewel de AI streeft naar accurate en behulpzame informatie, is het belangrijk om kritieke informatie te verifiëren bij gezaghebbende bronnen. De AI is een hulpmiddel, geen vervanging voor professioneel advies."
     }
   ];
 
@@ -35,7 +35,7 @@ const Help = () => {
           className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back
+          Terug
         </button>
 
         <h1 className="text-3xl font-bold mb-8">Help & FAQ</h1>
