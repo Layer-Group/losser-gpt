@@ -164,6 +164,8 @@ export default function Index() {
 
   const isLoading = sendMessage.isPending;
 
+  const showWelcomeScreen = !selectedChatId || (messages && messages.length === 0);
+
   return (
     <div className="flex h-screen overflow-hidden">
       <ChatSidebar
@@ -174,7 +176,9 @@ export default function Index() {
       />
       <main className="flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto">
-          {selectedChatId ? (
+          {showWelcomeScreen ? (
+            <WelcomeScreen />
+          ) : (
             messages?.map((message: Message) => (
               <ChatMessage
                 key={message.id}
@@ -182,8 +186,6 @@ export default function Index() {
                 isUser={message.is_user}
               />
             ))
-          ) : (
-            <WelcomeScreen />
           )}
         </div>
         <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
