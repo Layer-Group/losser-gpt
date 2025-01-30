@@ -4,8 +4,9 @@ import { ChatMessage } from "@/components/ChatMessage";
 import { ChatInput } from "@/components/ChatInput";
 import { WelcomeScreen } from "@/components/WelcomeScreen";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 interface Message {
   id: string;
@@ -25,6 +26,28 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  // Check authentication
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth");
+      }
+    };
+    
+    checkAuth();
+
+    // Subscribe to auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        navigate("/auth");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   // Fetch chats
   const { data: chats = [] } = useQuery({
@@ -60,9 +83,15 @@ const Index = () => {
   // Create new chat mutation
   const createChat = useMutation({
     mutationFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
       const { data, error } = await supabase
         .from("chats")
-        .insert([{ user_id: (await supabase.auth.getUser()).data.user?.id }])
+        .insert([{ user_id: user.id }])
         .select()
         .single();
       
@@ -73,10 +102,11 @@ const Index = () => {
       queryClient.invalidateQueries({ queryKey: ["chats"] });
       setSelectedChatId(newChat.id);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Error creating chat:", error);
       toast({
         title: "Error",
-        description: "Failed to create new chat",
+        description: "Failed to create new chat. Please try again.",
         variant: "destructive"
       });
     }
