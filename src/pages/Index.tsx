@@ -1,12 +1,51 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { ChatSidebar } from "@/components/ChatSidebar";
+import { ChatMessage } from "@/components/ChatMessage";
+import { ChatInput } from "@/components/ChatInput";
+import { WelcomeScreen } from "@/components/WelcomeScreen";
+
+interface Message {
+  content: string;
+  isUser: boolean;
+}
 
 const Index = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  const handleSendMessage = (content: string) => {
+    setMessages((prev) => [...prev, { content, isUser: true }]);
+    // Here you would typically make an API call to OpenAI
+    // For now, we'll just echo back a response
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          content: "This is a placeholder response. OpenAI integration coming soon!",
+          isUser: false,
+        },
+      ]);
+    }, 1000);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="flex h-screen bg-background">
+      <ChatSidebar />
+      <main className="flex-1 flex flex-col">
+        <div className="flex-1 overflow-y-auto scrollbar-hidden">
+          {messages.length === 0 ? (
+            <WelcomeScreen />
+          ) : (
+            messages.map((message, index) => (
+              <ChatMessage
+                key={index}
+                content={message.content}
+                isUser={message.isUser}
+              />
+            ))
+          )}
+        </div>
+        <ChatInput onSendMessage={handleSendMessage} />
+      </main>
     </div>
   );
 };
