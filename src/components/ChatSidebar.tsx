@@ -9,7 +9,13 @@ import { useState } from "react";
 import { SettingsDialog } from "./SettingsDialog";
 import { Chat } from "@/types/chat";
 import { Input } from "./ui/input";
-import { ShieldCheckIcon } from '@heroicons/react/24/solid'
+import { ShieldCheckIcon } from '@heroicons/react/24/solid';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface NavItemProps {
   icon: React.ElementType;
@@ -190,163 +196,177 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat, is
       </div>
 
       <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
-        <div className="mb-4">
-          <h2 className="px-3 text-sm font-medium text-muted-foreground mb-2">Actieve Chats</h2>
-          {activeChats.map((chat) => (
-            <div key={chat.id} className="relative">
-              {editingChatId === chat.id ? (
-                <div className="flex items-center gap-2 px-3 py-2">
-                  <Input
-                    value={editingTitle}
-                    onChange={(e) => setEditingTitle(e.target.value.slice(0, 10))}
-                    className="h-8 text-sm"
-                    autoFocus
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleUpdateTitle(chat.id)}
-                    className="h-8 w-8"
-                  >
-                    <Check className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setEditingChatId(null)}
-                    className="h-8 w-8"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <NavItem
-                  icon={MessageSquare}
-                  label={chat.title}
-                  active={chat.id === selectedChatId}
-                  onClick={() => onChatSelect(chat.id)}
-                  actions={
-                    <div className="flex items-center gap-1 bg-background/80 rounded-md px-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          startEditingTitle(chat);
-                        }}
-                        className="h-6 w-6"
-                      >
-                        <Edit2 className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleArchiveChat(chat.id, chat.archived);
-                        }}
-                        className="h-6 w-6"
-                      >
-                        <Archive className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteChat(chat.id);
-                        }}
-                        className="h-6 w-6 text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  }
-                />
-              )}
-            </div>
-          ))}
-        </div>
-
-        {archivedChats.length > 0 && (
-          <div className="mb-4">
-            <h2 className="px-3 text-sm font-medium text-muted-foreground mb-2">Gearchiveerde Chats</h2>
-            {archivedChats.map((chat) => (
-              <div key={chat.id} className="relative">
-                {editingChatId === chat.id ? (
-                  <div className="flex items-center gap-2 px-3 py-2">
-                    <Input
-                      value={editingTitle}
-                      onChange={(e) => setEditingTitle(e.target.value.slice(0, 10))}
-                      className="h-8 text-sm"
-                      autoFocus
-                    />
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleUpdateTitle(chat.id)}
-                      className="h-8 w-8"
-                    >
-                      <Check className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setEditingChatId(null)}
-                      className="h-8 w-8"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <NavItem
-                    icon={MessageSquare}
-                    label={chat.title}
-                    active={chat.id === selectedChatId}
-                    onClick={() => onChatSelect(chat.id)}
-                    actions={
-                      <div className="flex items-center gap-1 bg-background/80 rounded-md px-1">
+        <Accordion type="multiple" defaultValue={["active", "archived"]} className="space-y-2">
+          <AccordionItem value="active" className="border-none">
+            <AccordionTrigger className="py-2 px-3 text-sm font-medium text-muted-foreground hover:no-underline">
+              Actieve Chats
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-1">
+                {activeChats.map((chat) => (
+                  <div key={chat.id} className="relative">
+                    {editingChatId === chat.id ? (
+                      <div className="flex items-center gap-2 px-3 py-2">
+                        <Input
+                          value={editingTitle}
+                          onChange={(e) => setEditingTitle(e.target.value.slice(0, 10))}
+                          className="h-8 text-sm"
+                          autoFocus
+                        />
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            startEditingTitle(chat);
-                          }}
-                          className="h-6 w-6"
+                          onClick={() => handleUpdateTitle(chat.id)}
+                          className="h-8 w-8"
                         >
-                          <Edit2 className="h-3 w-3" />
+                          <Check className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleArchiveChat(chat.id, chat.archived);
-                          }}
-                          className="h-6 w-6"
+                          onClick={() => setEditingChatId(null)}
+                          className="h-8 w-8"
                         >
-                          <Archive className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteChat(chat.id);
-                          }}
-                          className="h-6 w-6 text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-3 w-3" />
+                          <X className="h-4 w-4" />
                         </Button>
                       </div>
-                    }
-                  />
-                )}
+                    ) : (
+                      <NavItem
+                        icon={MessageSquare}
+                        label={chat.title}
+                        active={chat.id === selectedChatId}
+                        onClick={() => onChatSelect(chat.id)}
+                        actions={
+                          <div className="flex items-center gap-1 bg-background/80 rounded-md px-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                startEditingTitle(chat);
+                              }}
+                              className="h-6 w-6"
+                            >
+                              <Edit2 className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleArchiveChat(chat.id, chat.archived);
+                              }}
+                              className="h-6 w-6"
+                            >
+                              <Archive className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteChat(chat.id);
+                              }}
+                              className="h-6 w-6 text-destructive hover:text-destructive"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        }
+                      />
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+            </AccordionContent>
+          </AccordionItem>
+
+          {archivedChats.length > 0 && (
+            <AccordionItem value="archived" className="border-none">
+              <AccordionTrigger className="py-2 px-3 text-sm font-medium text-muted-foreground hover:no-underline">
+                Gearchiveerde Chats
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-1">
+                  {archivedChats.map((chat) => (
+                    <div key={chat.id} className="relative">
+                      {editingChatId === chat.id ? (
+                        <div className="flex items-center gap-2 px-3 py-2">
+                          <Input
+                            value={editingTitle}
+                            onChange={(e) => setEditingTitle(e.target.value.slice(0, 10))}
+                            className="h-8 text-sm"
+                            autoFocus
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleUpdateTitle(chat.id)}
+                            className="h-8 w-8"
+                          >
+                            <Check className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setEditingChatId(null)}
+                            className="h-8 w-8"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <NavItem
+                          icon={MessageSquare}
+                          label={chat.title}
+                          active={chat.id === selectedChatId}
+                          onClick={() => onChatSelect(chat.id)}
+                          actions={
+                            <div className="flex items-center gap-1 bg-background/80 rounded-md px-1">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  startEditingTitle(chat);
+                                }}
+                                className="h-6 w-6"
+                              >
+                                <Edit2 className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleArchiveChat(chat.id, chat.archived);
+                                }}
+                                className="h-6 w-6"
+                              >
+                                <Archive className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteChat(chat.id);
+                                }}
+                                className="h-6 w-6 text-destructive hover:text-destructive"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          }
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          )}
+        </Accordion>
       </nav>
 
       <div className="p-2 border-t">
