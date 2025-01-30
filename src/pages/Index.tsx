@@ -3,6 +3,8 @@ import { ChatSidebar } from "@/components/ChatSidebar";
 import { ChatMessage } from "@/components/ChatMessage";
 import { ChatInput } from "@/components/ChatInput";
 import { WelcomeScreen } from "@/components/WelcomeScreen";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Message {
   content: string;
@@ -11,20 +13,31 @@ interface Message {
 
 const Index = () => {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  const handleSendMessage = (content: string) => {
-    setMessages((prev) => [...prev, { content, isUser: true }]);
-    // Here you would typically make an API call to OpenAI
-    // For now, we'll just echo back a response
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          content: "This is a placeholder response. OpenAI integration coming soon!",
-          isUser: false,
-        },
-      ]);
-    }, 1000);
+  const handleSendMessage = async (content: string) => {
+    try {
+      setIsLoading(true);
+      setMessages((prev) => [...prev, { content, isUser: true }]);
+
+      const { data, error } = await supabase.functions.invoke('chat', {
+        body: { message: content }
+      });
+
+      if (error) throw error;
+
+      setMessages((prev) => [...prev, { content: data.reply, isUser: false }]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -44,7 +57,7 @@ const Index = () => {
             ))
           )}
         </div>
-        <ChatInput onSendMessage={handleSendMessage} />
+        <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
       </main>
     </div>
   );
