@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PlusIcon, ArchiveIcon, UnarchiveIcon, PencilIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, ArchiveBoxIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { Chat } from "@/types/chat";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -162,11 +162,7 @@ export function ChatSidebar({
         }}
         className="opacity-0 group-hover:opacity-100 transition-opacity ml-2"
       >
-        {chat.archived ? (
-          <UnarchiveIcon className="h-4 w-4 text-muted-foreground" />
-        ) : (
-          <ArchiveIcon className="h-4 w-4 text-muted-foreground" />
-        )}
+        <ArchiveBoxIcon className="h-4 w-4 text-muted-foreground" />
       </button>
     </div>
   );
