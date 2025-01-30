@@ -6,8 +6,8 @@ const Help = () => {
 
   const faqs = [
     {
-      question: "Wat is Custom GPT?",
-      answer: "Custom GPT is een AI-aangedreven chatinterface waarmee je gesprekken kunt voeren met een geavanceerd taalmodel. Het is ontworpen om je vragen te beantwoorden en te helpen bij verschillende taken."
+      question: "Wat is Losser GPT?",
+      answer: "Losser GPT is een AI-aangedreven chatinterface waarmee je gesprekken kunt voeren met een geavanceerd taalmodel. Het is ontworpen om je vragen te beantwoorden en te helpen bij verschillende taken."
     },
     {
       question: "Hoe start ik een nieuwe chat?",
@@ -18,7 +18,7 @@ const Help = () => {
       answer: "Ja, al je chatgesprekken worden opgeslagen en zijn toegankelijk via de zijbalk. Je kunt op elk moment terugkeren naar eerdere gesprekken."
     },
     {
-      question: "Wat kan ik aan Custom GPT vragen?",
+      question: "Wat kan ik aan Losser GPT vragen?",
       answer: "Je kunt vragen stellen over een breed scala aan onderwerpen, om uitleg vragen, advies inwinnen of een algemeen gesprek voeren. De AI is ontworpen om behulpzaam te zijn binnen passende grenzen."
     },
     {
