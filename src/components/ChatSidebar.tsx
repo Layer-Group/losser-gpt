@@ -1,6 +1,8 @@
 import { MessageSquare, Settings, HelpCircle, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Chat {
   id: string;
@@ -37,6 +39,22 @@ const NavItem = ({ icon: Icon, label, active, onClick }: NavItemProps) => (
 
 export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: ChatSidebarProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      navigate("/auth");
+    } catch (error: any) {
+      toast({
+        title: "Error logging out",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="w-64 h-screen flex flex-col bg-background border-r">
@@ -69,7 +87,11 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
           label="Help" 
           onClick={() => navigate("/help")}
         />
-        <NavItem icon={LogOut} label="Log Out" />
+        <NavItem 
+          icon={LogOut} 
+          label="Log Out" 
+          onClick={handleLogout}
+        />
       </div>
     </div>
   );
