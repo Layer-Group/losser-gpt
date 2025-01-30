@@ -60,6 +60,7 @@ export const SettingsDialog = ({ open, onOpenChange }: SettingsDialogProps) => {
                   variant={theme === "system" ? "default" : "outline"}
                   size="icon"
                   onClick={() => setTheme("system")}
+                  className="bg-background"
                 >
                   <Laptop className="h-4 w-4" />
                 </Button>
@@ -67,6 +68,7 @@ export const SettingsDialog = ({ open, onOpenChange }: SettingsDialogProps) => {
                   variant={theme === "light" ? "default" : "outline"}
                   size="icon"
                   onClick={() => setTheme("light")}
+                  className="bg-background"
                 >
                   <Sun className="h-4 w-4" />
                 </Button>
@@ -74,6 +76,7 @@ export const SettingsDialog = ({ open, onOpenChange }: SettingsDialogProps) => {
                   variant={theme === "dark" ? "default" : "outline"}
                   size="icon"
                   onClick={() => setTheme("dark")}
+                  className="bg-background"
                 >
                   <Moon className="h-4 w-4" />
                 </Button>

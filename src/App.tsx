@@ -7,10 +7,12 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <QueryClientProvider client={queryClient}>
-        <Outlet />
-        <Toaster />
+        <div className="min-h-screen bg-background">
+          <Outlet />
+          <Toaster />
+        </div>
       </QueryClientProvider>
     </ThemeProvider>
   );
