@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { SettingsDialog } from "./SettingsDialog";
 
 interface Chat {
   id: string;
@@ -52,6 +54,7 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [showSettings, setShowSettings] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -222,7 +225,11 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
       </nav>
 
       <div className="p-2 border-t">
-        <NavItem icon={Settings} label="Instellingen" />
+        <NavItem 
+          icon={Settings} 
+          label="Instellingen" 
+          onClick={() => setShowSettings(true)}
+        />
         <NavItem 
           icon={HelpCircle} 
           label="Help" 
@@ -234,6 +241,11 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat }: 
           onClick={handleLogout}
         />
       </div>
+
+      <SettingsDialog
+        open={showSettings}
+        onOpenChange={setShowSettings}
+      />
     </div>
   );
 };
