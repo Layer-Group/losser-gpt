@@ -15,8 +15,9 @@ serve(async (req) => {
 
   try {
     const { message, chatId } = await req.json();
+    console.log('Received request:', { message, chatId });
 
-    // Call OpenAI API
+    // Call OpenAI API with optimized settings
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -28,17 +29,22 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Je bent een behulpzame assistent die duidelijke en beknopte antwoorden geeft in het Nederlands.'
+            content: 'Je bent een behulpzame assistent die korte en beknopte antwoorden geeft in het Nederlands. Wees direct en to-the-point.'
           },
           {
             role: 'user',
             content: message
           }
         ],
+        temperature: 0.7,
+        max_tokens: 150,
+        presence_penalty: 0,
+        frequency_penalty: 0,
       }),
     });
 
     const openAIData = await openAIResponse.json();
+    console.log('OpenAI response received');
     
     if (!openAIData.choices?.[0]?.message?.content) {
       throw new Error('Invalid response from OpenAI');
@@ -61,8 +67,11 @@ serve(async (req) => {
       });
 
     if (dbError) {
+      console.error('Database error:', dbError);
       throw dbError;
     }
+
+    console.log('Response stored in database');
 
     return new Response(
       JSON.stringify({ reply: assistantMessage }),
