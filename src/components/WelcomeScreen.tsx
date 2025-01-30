@@ -3,7 +3,7 @@ import { AlertTriangle, Shield, Bell } from "lucide-react";
 export const WelcomeScreen = () => {
   return (
     <div className="max-w-4xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-8">Welkom bij Custom GPT</h1>
+      <h1 className="text-3xl font-bold mb-8">Welkom bij Losser GPT</h1>
 
       <div className="grid gap-8 md:grid-cols-3">
         <div className="space-y-6">
