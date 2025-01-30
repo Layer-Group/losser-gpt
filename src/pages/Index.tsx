@@ -103,8 +103,8 @@ const Index = () => {
     onError: (error) => {
       console.error("Error creating chat:", error);
       toast({
-        title: "Error",
-        description: "Failed to create new chat. Please try again.",
+        title: "Fout",
+        description: "Er ging iets mis bij het maken van een nieuwe chat. Probeer het opnieuw.",
         variant: "destructive"
       });
     }
@@ -157,8 +157,8 @@ const Index = () => {
     } catch (error) {
       console.error("Error sending message:", error);
       toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
+        title: "Fout",
+        description: "Er ging iets mis bij het versturen van je bericht. Probeer het opnieuw.",
         variant: "destructive"
       });
     } finally {
@@ -176,12 +176,8 @@ const Index = () => {
       />
       <main className="flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto scrollbar-hidden">
-          {!selectedChatId ? (
+          {(!selectedChatId || messages.length === 0) ? (
             <WelcomeScreen />
-          ) : messages.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-muted-foreground">
-              Start a new conversation
-            </div>
           ) : (
             messages.map((message) => (
               <ChatMessage
