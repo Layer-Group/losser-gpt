@@ -13,6 +13,7 @@ export const WelcomeScreen = () => {
           </h2>
           <ul className="space-y-4 text-muted-foreground">
             <li>• Chats worden 30 dagen bewaard, daarna wordt de oudste chat automatisch verwijderd</li>
+            <li>• Gearchiveerde chats worden 90 dagen bewaard</li>
           </ul>
         </div>
 
