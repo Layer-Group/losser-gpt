@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,14 +8,16 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { message } = await req.json();
+    const { message, chatId } = await req.json();
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // Call OpenAI API
+    const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
@@ -23,23 +26,46 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
-          { 
-            role: 'system', 
-            content: 'You are a helpful assistant that provides clear and concise responses.' 
+          {
+            role: 'system',
+            content: 'Je bent een behulpzame assistent die duidelijke en beknopte antwoorden geeft in het Nederlands.'
           },
-          { 
-            role: 'user', 
-            content: message 
+          {
+            role: 'user',
+            content: message
           }
         ],
       }),
     });
 
-    const data = await response.json();
-    const reply = data.choices[0].message.content;
+    const openAIData = await openAIResponse.json();
+    
+    if (!openAIData.choices?.[0]?.message?.content) {
+      throw new Error('Invalid response from OpenAI');
+    }
+
+    const assistantMessage = openAIData.choices[0].message.content;
+
+    // Store the assistant's response in the database
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    const { error: dbError } = await supabaseClient
+      .from('messages')
+      .insert({
+        chat_id: chatId,
+        content: assistantMessage,
+        is_user: false,
+      });
+
+    if (dbError) {
+      throw dbError;
+    }
 
     return new Response(
-      JSON.stringify({ reply }),
+      JSON.stringify({ reply: assistantMessage }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
