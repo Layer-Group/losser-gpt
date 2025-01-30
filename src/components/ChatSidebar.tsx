@@ -272,39 +272,78 @@ export const ChatSidebar = ({ chats, selectedChatId, onChatSelect, onNewChat, is
           <div className="mb-4">
             <h2 className="px-3 text-sm font-medium text-muted-foreground mb-2">Gearchiveerde Chats</h2>
             {archivedChats.map((chat) => (
-              <NavItem
-                key={chat.id}
-                icon={MessageSquare}
-                label={chat.title}
-                active={chat.id === selectedChatId}
-                onClick={() => onChatSelect(chat.id)}
-                actions={
-                  <div className="flex items-center gap-1 bg-background/80 rounded-md px-1">
+              <div key={chat.id} className="relative">
+                {editingChatId === chat.id ? (
+                  <div className="flex items-center gap-2 px-3 py-2">
+                    <Input
+                      value={editingTitle}
+                      onChange={(e) => setEditingTitle(e.target.value.slice(0, 10))}
+                      className="h-8 text-sm"
+                      autoFocus
+                    />
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleArchiveChat(chat.id, chat.archived);
-                      }}
-                      className="h-6 w-6"
+                      onClick={() => handleUpdateTitle(chat.id)}
+                      className="h-8 w-8"
                     >
-                      <Archive className="h-3 w-3" />
+                      <Check className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteChat(chat.id);
-                      }}
-                      className="h-6 w-6 text-destructive hover:text-destructive"
+                      onClick={() => setEditingChatId(null)}
+                      className="h-8 w-8"
                     >
-                      <Trash2 className="h-3 w-3" />
+                      <X className="h-4 w-4" />
                     </Button>
                   </div>
-                }
-              />
+                ) : (
+                  <NavItem
+                    icon={MessageSquare}
+                    label={chat.title}
+                    active={chat.id === selectedChatId}
+                    onClick={() => onChatSelect(chat.id)}
+                    actions={
+                      <div className="flex items-center gap-1 bg-background/80 rounded-md px-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            startEditingTitle(chat);
+                          }}
+                          className="h-6 w-6"
+                        >
+                          <Edit2 className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleArchiveChat(chat.id, chat.archived);
+                          }}
+                          className="h-6 w-6"
+                        >
+                          <Archive className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteChat(chat.id);
+                          }}
+                          className="h-6 w-6 text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    }
+                  />
+                )}
+              </div>
             ))}
           </div>
         )}
