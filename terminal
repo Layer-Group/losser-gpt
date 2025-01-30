@@ -1,0 +1,13 @@
+npm install vite @vitejs/plugin-react --save-dev 
+npm run dev 
+
+# Remove existing lockfiles
+rm -rf bun.lockb package-lock.json yarn.lock
+
+# Create a new lockfile using npm
+npm install
+
+# Commit the new lockfile
+git add package-lock.json
+git commit -m "Update lockfile for deployment"
+git push 
