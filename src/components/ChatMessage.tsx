@@ -24,7 +24,7 @@ export const ChatMessage = ({ content, isUser, isLoading }: ChatMessageProps) =>
             : "bg-secondary text-secondary-foreground dark:bg-secondary/10"
         )}
       >
-        {isLoading ? (
+        {!isUser && isLoading ? (
           <div className="flex items-center gap-2">
             <Loader2 className="w-4 h-4 animate-spin" />
             <span>Antwoord genereren...</span>
