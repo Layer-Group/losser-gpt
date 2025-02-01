@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { ShieldCheckIcon } from '@heroicons/react/24/solid';
 import { supabase } from "@/integrations/supabase/client";
 import { Chat } from "@/types/chat";
+import { Pencil, Trash2, Archive } from "lucide-react";
 
 interface ChatSidebarProps {
   chats: Chat[];
@@ -53,7 +54,7 @@ export function ChatSidebar({
     setNewTitle(currentTitle);
   };
 
-  const handleTitleSubmit = (chatId: string) => {
+  const handleTitleSubmit = async (chatId: string) => {
     if (newTitle.length > 12) {
       toast({
         variant: "destructive",
@@ -63,29 +64,68 @@ export function ChatSidebar({
       return;
     }
 
-    const updateChat = async () => {
-      const { error } = await supabase
-        .from("chats")
-        .update({ title: newTitle })
-        .eq("id", chatId);
+    const { error } = await supabase
+      .from("chats")
+      .update({ title: newTitle })
+      .eq("id", chatId);
 
-      if (error) {
-        toast({
-          variant: "destructive",
-          title: "Fout",
-          description: "Er is een fout opgetreden bij het bijwerken van de chat.",
-        });
-      } else {
-        toast({
-          title: "Chat bijgewerkt",
-          description: "De chattitel is succesvol bijgewerkt.",
-        });
-        setEditingChatId(null);
-        setNewTitle("");
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Fout",
+        description: "Er is een fout opgetreden bij het bijwerken van de chat.",
+      });
+    } else {
+      toast({
+        title: "Chat bijgewerkt",
+        description: "De chattitel is succesvol bijgewerkt.",
+      });
+      setEditingChatId(null);
+      setNewTitle("");
+    }
+  };
+
+  const handleDeleteChat = async (chatId: string) => {
+    const { error } = await supabase
+      .from("chats")
+      .delete()
+      .eq("id", chatId);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Fout",
+        description: "Er is een fout opgetreden bij het verwijderen van de chat.",
+      });
+    } else {
+      toast({
+        title: "Chat verwijderd",
+        description: "De chat is succesvol verwijderd.",
+      });
+      if (selectedChatId === chatId) {
+        onNewChat();
       }
-    };
+    }
+  };
 
-    updateChat();
+  const handleArchiveChat = async (chatId: string) => {
+    const { error } = await supabase
+      .from("chats")
+      .update({ archived: true })
+      .eq("id", chatId);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Fout",
+        description: "Er is een fout opgetreden bij het archiveren van de chat.",
+      });
+    } else {
+      toast({
+        title: "Chat gearchiveerd",
+        description: "De chat is succesvol gearchiveerd.",
+      });
+    }
   };
 
   return (
@@ -122,19 +162,39 @@ export function ChatSidebar({
             <h2 className="font-medium mb-2">Actieve Chats</h2>
             <div className="space-y-1">
               {activeChats.map((chat) => (
-                <div key={chat.id} className="flex items-center justify-between">
+                <div key={chat.id} className="flex items-center justify-between group">
                   <span
-                    className={`cursor-pointer ${selectedChatId === chat.id ? 'font-bold' : ''}`}
+                    className={`cursor-pointer truncate flex-1 ${selectedChatId === chat.id ? 'font-bold' : ''}`}
                     onClick={() => onChatSelect(chat.id)}
                   >
                     {chat.title}
                   </span>
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleEditClick(chat.id, chat.title)}
-                  >
-                    Bewerken
-                  </Button>
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleEditClick(chat.id, chat.title)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleArchiveChat(chat.id)}
+                    >
+                      <Archive className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-destructive"
+                      onClick={() => handleDeleteChat(chat.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -145,19 +205,31 @@ export function ChatSidebar({
               <h2 className="font-medium mb-2">Gearchiveerde Chats</h2>
               <div className="space-y-1">
                 {archivedChats.map((chat) => (
-                  <div key={chat.id} className="flex items-center justify-between">
+                  <div key={chat.id} className="flex items-center justify-between group">
                     <span
-                      className={`cursor-pointer ${selectedChatId === chat.id ? 'font-bold' : ''}`}
+                      className={`cursor-pointer truncate flex-1 ${selectedChatId === chat.id ? 'font-bold' : ''}`}
                       onClick={() => onChatSelect(chat.id)}
                     >
                       {chat.title}
                     </span>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleEditClick(chat.id, chat.title)}
-                    >
-                      Bewerken
-                    </Button>
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => handleEditClick(chat.id, chat.title)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive"
+                        onClick={() => handleDeleteChat(chat.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
