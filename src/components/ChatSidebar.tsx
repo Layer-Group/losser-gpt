@@ -6,7 +6,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { ShieldCheckIcon } from '@heroicons/react/24/solid';
 import { supabase } from "@/integrations/supabase/client";
 import { Chat } from "@/types/chat";
-import { Pencil, Trash2, Archive } from "lucide-react";
+import { Pencil, Trash2, Archive, ChevronDown } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface ChatSidebarProps {
   chats: Chat[];
@@ -29,6 +30,8 @@ export function ChatSidebar({
 }: ChatSidebarProps) {
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState("");
+  const [isActiveChatsOpen, setIsActiveChatsOpen] = useState(true);
+  const [isArchivedChatsOpen, setIsArchivedChatsOpen] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -158,59 +161,37 @@ export function ChatSidebar({
         </Button>
 
         <div className="space-y-4 flex-1">
-          <div>
-            <h2 className="font-medium mb-2">Actieve Chats</h2>
-            <div className="space-y-1">
-              {activeChats.map((chat) => (
-                <div key={chat.id} className="flex items-center justify-between group">
-                  <span
-                    className={`cursor-pointer truncate flex-1 ${selectedChatId === chat.id ? 'font-bold' : ''}`}
-                    onClick={() => onChatSelect(chat.id)}
-                  >
-                    {chat.title}
-                  </span>
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => handleEditClick(chat.id, chat.title)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => handleArchiveChat(chat.id)}
-                    >
-                      <Archive className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-destructive"
-                      onClick={() => handleDeleteChat(chat.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
+          <Collapsible open={isActiveChatsOpen} onOpenChange={setIsActiveChatsOpen}>
+            <div className="flex items-center">
+              <CollapsibleTrigger className="flex items-center gap-2 font-medium hover:text-accent-foreground">
+                <ChevronDown className={`h-4 w-4 transition-transform ${isActiveChatsOpen ? '' : '-rotate-90'}`} />
+                Actieve Chats
+              </CollapsibleTrigger>
             </div>
-          </div>
-
-          {archivedChats.length > 0 && (
-            <div>
-              <h2 className="font-medium mb-2">Gearchiveerde Chats</h2>
+            <CollapsibleContent className="mt-2">
               <div className="space-y-1">
-                {archivedChats.map((chat) => (
+                {activeChats.map((chat) => (
                   <div key={chat.id} className="flex items-center justify-between group">
                     <span
                       className={`cursor-pointer truncate flex-1 ${selectedChatId === chat.id ? 'font-bold' : ''}`}
                       onClick={() => onChatSelect(chat.id)}
                     >
-                      {chat.title}
+                      {editingChatId === chat.id ? (
+                        <Input
+                          value={newTitle}
+                          onChange={(e) => setNewTitle(e.target.value)}
+                          onBlur={() => handleTitleSubmit(chat.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleTitleSubmit(chat.id);
+                            }
+                          }}
+                          className="h-6 py-1"
+                          autoFocus
+                        />
+                      ) : (
+                        chat.title
+                      )}
                     </span>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button
@@ -224,6 +205,14 @@ export function ChatSidebar({
                       <Button
                         variant="ghost"
                         size="icon"
+                        className="h-8 w-8"
+                        onClick={() => handleArchiveChat(chat.id)}
+                      >
+                        <Archive className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         className="h-8 w-8 text-destructive"
                         onClick={() => handleDeleteChat(chat.id)}
                       >
@@ -233,7 +222,65 @@ export function ChatSidebar({
                   </div>
                 ))}
               </div>
-            </div>
+            </CollapsibleContent>
+          </Collapsible>
+
+          {archivedChats.length > 0 && (
+            <Collapsible open={isArchivedChatsOpen} onOpenChange={setIsArchivedChatsOpen}>
+              <div className="flex items-center">
+                <CollapsibleTrigger className="flex items-center gap-2 font-medium hover:text-accent-foreground">
+                  <ChevronDown className={`h-4 w-4 transition-transform ${isArchivedChatsOpen ? '' : '-rotate-90'}`} />
+                  Gearchiveerde Chats
+                </CollapsibleTrigger>
+              </div>
+              <CollapsibleContent className="mt-2">
+                <div className="space-y-1">
+                  {archivedChats.map((chat) => (
+                    <div key={chat.id} className="flex items-center justify-between group">
+                      <span
+                        className={`cursor-pointer truncate flex-1 ${selectedChatId === chat.id ? 'font-bold' : ''}`}
+                        onClick={() => onChatSelect(chat.id)}
+                      >
+                        {editingChatId === chat.id ? (
+                          <Input
+                            value={newTitle}
+                            onChange={(e) => setNewTitle(e.target.value)}
+                            onBlur={() => handleTitleSubmit(chat.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleTitleSubmit(chat.id);
+                              }
+                            }}
+                            className="h-6 py-1"
+                            autoFocus
+                          />
+                        ) : (
+                          chat.title
+                        )}
+                      </span>
+                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => handleEditClick(chat.id, chat.title)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive"
+                          onClick={() => handleDeleteChat(chat.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           )}
         </div>
 
