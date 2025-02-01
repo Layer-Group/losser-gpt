@@ -5,14 +5,6 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { ShieldCheckIcon } from '@heroicons/react/24/solid';
 import { supabase } from "@/integrations/supabase/client";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
 import { Chat } from "@/types/chat";
 
 interface ChatSidebarProps {
@@ -98,7 +90,7 @@ export function ChatSidebar({
 
   return (
     <div className="w-64 h-screen bg-background border-r flex flex-col">
-      <div className="p-4 flex flex-col">
+      <div className="p-4 flex-1 flex flex-col">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-semibold">Losser GPT</h1>
           {isProtected && (
@@ -125,31 +117,7 @@ export function ChatSidebar({
           Nieuwe chat +
         </Button>
 
-        <NavigationMenu className="mb-4">
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Menu</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="w-48 p-2">
-                  <NavigationMenuLink
-                    className="block px-2 py-2 hover:bg-accent rounded-md cursor-pointer"
-                    onClick={() => navigate('/help')}
-                  >
-                    Help
-                  </NavigationMenuLink>
-                  <NavigationMenuLink
-                    className="block px-2 py-2 hover:bg-accent rounded-md cursor-pointer text-destructive"
-                    onClick={handleSignOut}
-                  >
-                    Uitloggen
-                  </NavigationMenuLink>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-
-        <div className="space-y-4">
+        <div className="space-y-4 flex-1">
           <div>
             <h2 className="font-medium mb-2">Actieve Chats</h2>
             <div className="space-y-1">
@@ -195,6 +163,23 @@ export function ChatSidebar({
               </div>
             </div>
           )}
+        </div>
+
+        <div className="mt-4 space-y-2">
+          <Button
+            className="w-full"
+            variant="ghost"
+            onClick={() => navigate('/help')}
+          >
+            Help
+          </Button>
+          <Button
+            className="w-full text-destructive"
+            variant="ghost"
+            onClick={handleSignOut}
+          >
+            Uitloggen
+          </Button>
         </div>
       </div>
     </div>
